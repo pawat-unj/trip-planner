@@ -1,0 +1,210 @@
+{
+  "meta": {
+    "version": "1.0",
+    "template": "backpacking",
+    "title": "John Muir Trail: Tuolumne to Yosemite Valley",
+    "subtitle": "A stunning 3-day section hike through the heart of the Sierra Nevada",
+    "dates": {
+      "start": "2024-07-15",
+      "end": "2024-07-17"
+    },
+    "location": "Yosemite National Park, California",
+    "createdAt": "2024-06-01T00:00:00.000Z",
+    "coverImage": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200&h=600&fit=crop"
+  },
+  "shared": {
+    "highlights": [
+      "Breathtaking views of Half Dome and Clouds Rest",
+      "Alpine meadows filled with wildflowers",
+      "Crystal-clear mountain lakes for swimming",
+      "World-famous Yosemite Valley finish"
+    ],
+    "weather": [
+      { "date": "2024-07-15", "high": 75, "low": 45, "condition": "sunny", "precipitation": 5 },
+      { "date": "2024-07-16", "high": 72, "low": 48, "condition": "cloudy", "precipitation": 20 },
+      { "date": "2024-07-17", "high": 78, "low": 50, "condition": "sunny", "precipitation": 0 }
+    ],
+    "packingList": [
+      { "id": "tent", "name": "2-person tent", "category": "Shelter", "essential": true },
+      { "id": "sleeping-bag", "name": "20°F sleeping bag", "category": "Shelter", "essential": true },
+      { "id": "sleeping-pad", "name": "Sleeping pad", "category": "Shelter", "essential": true },
+      { "id": "first-aid", "name": "First aid kit", "category": "Essentials", "essential": true },
+      { "id": "headlamp", "name": "Headlamp + batteries", "category": "Essentials", "essential": true },
+      { "id": "map", "name": "Trail map & compass", "category": "Essentials", "essential": true },
+      { "id": "water-filter", "name": "Water filter", "category": "Essentials", "essential": true },
+      { "id": "bear-canister", "name": "Bear canister", "category": "Essentials", "essential": true },
+      { "id": "sunscreen", "name": "Sunscreen SPF 50", "category": "Essentials" },
+      { "id": "rain-jacket", "name": "Rain jacket", "category": "Clothing", "essential": true },
+      { "id": "layers", "name": "Warm layers", "category": "Clothing", "essential": true },
+      { "id": "hiking-boots", "name": "Hiking boots", "category": "Clothing", "essential": true },
+      { "id": "hat", "name": "Sun hat", "category": "Clothing" },
+      { "id": "stove", "name": "Backpacking stove", "category": "Food" },
+      { "id": "fuel", "name": "Fuel canister", "category": "Food" },
+      { "id": "meals", "name": "Dehydrated meals (3 days)", "category": "Food", "quantity": 6 },
+      { "id": "snacks", "name": "Trail snacks", "category": "Food" }
+    ],
+    "importantInfo": [
+      "Wilderness permit required - pick up at Tuolumne Meadows Wilderness Center by 10am",
+      "Bear canisters are mandatory in this area",
+      "Cell service is very limited - download offline maps",
+      "Water sources are plentiful but always filter/treat",
+      "Lightning storms common in afternoon - start early each day"
+    ],
+    "carpooling": {
+      "type": "link",
+      "url": "https://docs.google.com/spreadsheets/d/example"
+    },
+    "photoAlbum": {
+      "url": "https://photos.google.com/share/example"
+    }
+  },
+  "templateData": {
+    "difficulty": "moderate",
+    "distance": 35,
+    "distanceUnit": "miles",
+    "days": 3,
+    "terrain": ["mountain", "forest"],
+    "trailStats": {
+      "totalDistance": 56.3,
+      "elevationGain": 2134,
+      "elevationLoss": 3048,
+      "maxElevation": 2926,
+      "minElevation": 1219,
+      "elevationProfile": [
+        { "distance": 0, "elevation": 2627 },
+        { "distance": 5, "elevation": 2800 },
+        { "distance": 10, "elevation": 2926 },
+        { "distance": 15, "elevation": 2700 },
+        { "distance": 20, "elevation": 2500 },
+        { "distance": 25, "elevation": 2300 },
+        { "distance": 30, "elevation": 2100 },
+        { "distance": 35, "elevation": 1800 },
+        { "distance": 40, "elevation": 1500 },
+        { "distance": 45, "elevation": 1350 },
+        { "distance": 50, "elevation": 1250 },
+        { "distance": 56.3, "elevation": 1219 }
+      ]
+    },
+    "permitRequired": true,
+    "permitInfo": "Wilderness permit required from Tuolumne Meadows"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "date": "2024-07-15",
+      "title": "Tuolumne Meadows to Sunrise Lakes",
+      "description": "Begin the adventure with stunning high-country scenery",
+      "activities": [
+        { "time": "8:00 AM", "title": "Pick up wilderness permit", "location": "Tuolumne Meadows Wilderness Center" },
+        { "time": "9:00 AM", "title": "Start hiking", "description": "Head south on the JMT from Cathedral Lakes trailhead" },
+        { "time": "12:00 PM", "title": "Lunch at Cathedral Lakes", "description": "Beautiful alpine lakes with views of Cathedral Peak" },
+        { "time": "4:00 PM", "title": "Arrive at Sunrise Lakes", "description": "Set up camp at one of the designated sites" }
+      ],
+      "accommodation": {
+        "name": "Sunrise Lakes Backpacker Camp",
+        "type": "tent",
+        "notes": "Several sites available, first-come first-served"
+      },
+      "meals": {
+        "breakfast": "At home before departure",
+        "lunch": "Trail mix and sandwiches",
+        "dinner": "Dehydrated backpacker meal"
+      },
+      "distance": 12,
+      "elevationGain": 300
+    },
+    {
+      "day": 2,
+      "date": "2024-07-16",
+      "title": "Sunrise Lakes to Little Yosemite Valley",
+      "description": "The most spectacular day with views of Half Dome and Clouds Rest",
+      "activities": [
+        { "time": "6:30 AM", "title": "Early start", "description": "Beat the afternoon thunderstorms" },
+        { "time": "9:00 AM", "title": "Clouds Rest junction", "description": "Optional side trip to Clouds Rest summit (adds 2 miles)" },
+        { "time": "1:00 PM", "title": "Half Dome views", "description": "Iconic views from the trail" },
+        { "time": "4:00 PM", "title": "Arrive at Little Yosemite Valley", "description": "Set up camp near the Merced River" }
+      ],
+      "accommodation": {
+        "name": "Little Yosemite Valley Backpacker Camp",
+        "type": "tent",
+        "notes": "Bear boxes available at camp"
+      },
+      "meals": {
+        "breakfast": "Oatmeal and coffee",
+        "lunch": "Energy bars and dried fruit",
+        "dinner": "Dehydrated backpacker meal"
+      },
+      "distance": 14,
+      "elevationGain": 500
+    },
+    {
+      "day": 3,
+      "date": "2024-07-17",
+      "title": "Little Yosemite Valley to Yosemite Valley",
+      "description": "Final descent past Nevada and Vernal Falls",
+      "activities": [
+        { "time": "7:00 AM", "title": "Break camp", "description": "Pack up and prepare for the final push" },
+        { "time": "8:30 AM", "title": "Nevada Fall", "description": "Spectacular 594-foot waterfall" },
+        { "time": "10:00 AM", "title": "Vernal Fall", "description": "317-foot waterfall via Mist Trail (get wet!)" },
+        { "time": "12:00 PM", "title": "Happy Isles trailhead", "description": "Trip complete! Catch shuttle to parking" },
+        { "time": "1:00 PM", "title": "Celebrate!", "description": "Burgers and beers at Yosemite Village", "location": "Degnan's Kitchen" }
+      ],
+      "meals": {
+        "breakfast": "Granola bars",
+        "lunch": "Celebratory meal in Yosemite Village"
+      },
+      "distance": 9,
+      "elevationGain": 100
+    }
+  ],
+  "mapData": {
+    "center": [37.74, -119.55],
+    "zoom": 11,
+    "routes": [
+      {
+        "id": "day1",
+        "name": "Day 1: Tuolumne to Sunrise",
+        "day": 1,
+        "points": [
+          { "lat": 37.8734, "lon": -119.3829 },
+          { "lat": 37.8500, "lon": -119.4100 },
+          { "lat": 37.8200, "lon": -119.4400 },
+          { "lat": 37.7950, "lon": -119.4650 }
+        ]
+      },
+      {
+        "id": "day2",
+        "name": "Day 2: Sunrise to LYV",
+        "day": 2,
+        "points": [
+          { "lat": 37.7950, "lon": -119.4650 },
+          { "lat": 37.7600, "lon": -119.5000 },
+          { "lat": 37.7350, "lon": -119.5200 },
+          { "lat": 37.7260, "lon": -119.5380 }
+        ]
+      },
+      {
+        "id": "day3",
+        "name": "Day 3: LYV to Valley",
+        "day": 3,
+        "points": [
+          { "lat": 37.7260, "lon": -119.5380 },
+          { "lat": 37.7180, "lon": -119.5450 },
+          { "lat": 37.7270, "lon": -119.5570 },
+          { "lat": 37.7320, "lon": -119.5630 }
+        ]
+      }
+    ],
+    "markers": [
+      { "id": "start", "name": "Cathedral Lakes Trailhead", "lat": 37.8734, "lon": -119.3829, "type": "trailhead", "day": 1 },
+      { "id": "cathedral", "name": "Cathedral Lakes", "lat": 37.8450, "lon": -119.4100, "type": "viewpoint", "day": 1 },
+      { "id": "sunrise", "name": "Sunrise Lakes Camp", "lat": 37.7950, "lon": -119.4650, "type": "camp", "day": 1 },
+      { "id": "clouds", "name": "Clouds Rest Junction", "lat": 37.7600, "lon": -119.5000, "type": "viewpoint", "day": 2 },
+      { "id": "halfdome", "name": "Half Dome View", "lat": 37.7350, "lon": -119.5200, "type": "viewpoint", "day": 2 },
+      { "id": "lyv", "name": "Little Yosemite Valley Camp", "lat": 37.7260, "lon": -119.5380, "type": "camp", "day": 2 },
+      { "id": "nevada", "name": "Nevada Fall", "lat": 37.7230, "lon": -119.5450, "type": "viewpoint", "day": 3 },
+      { "id": "vernal", "name": "Vernal Fall", "lat": 37.7270, "lon": -119.5500, "type": "viewpoint", "day": 3 },
+      { "id": "end", "name": "Happy Isles Trailhead", "lat": 37.7320, "lon": -119.5630, "type": "trailhead", "day": 3 }
+    ]
+  }
+}
