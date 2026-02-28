@@ -1,4 +1,5 @@
 export { TripHeader } from './TripHeader';
+export { TripOverviewSection } from './TripOverviewSection';
 export { HighlightsSection } from './HighlightsSection';
 export { WeatherSection } from './WeatherSection';
 export { PackingListSection } from './PackingListSection';

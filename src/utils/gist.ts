@@ -84,18 +84,18 @@ export function generateTripUrl(gistId: string, baseUrl?: string): string {
  */
 export function extractGistIdFromUrl(url: string): string | null {
   // Handle direct gist IDs
-  if (/^[a-f0-9]{32}$/i.test(url)) {
+  if (/^[a-f0-9]{8,}$/i.test(url)) {
     return url;
   }
 
   // Handle gist.github.com URLs
-  const gistMatch = url.match(/gist\.github\.com\/(?:\w+\/)?([a-f0-9]+)/i);
+  const gistMatch = url.match(/gist\.github\.com\/(?:[^/]+\/)?([a-f0-9]{8,})/i);
   if (gistMatch) {
     return gistMatch[1];
   }
 
   // Handle our app URLs
-  const appMatch = url.match(/[?&]gist=([a-f0-9]+)/i);
+  const appMatch = url.match(/[?&]gist=([a-f0-9]{8,})/i);
   if (appMatch) {
     return appMatch[1];
   }

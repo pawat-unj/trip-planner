@@ -1,96 +1,90 @@
 import type { CarpoolArrangement } from '../../types';
-import { Card, CardHeader, CardTitle, Button } from '../ui';
+import { Button } from '../ui';
+import { UsersIcon, MapPinIcon, ClockIcon } from '../ui/Icon';
 
 interface CarpoolSectionProps {
   carpool?: CarpoolArrangement;
 }
 
+function SectionHeader({ title }: { title: string }) {
+  return (
+    <div className="flex items-center gap-2 mb-4">
+      <UsersIcon className="w-4 h-4 text-accent-rust" />
+      <h3 className="font-serif font-semibold text-text-primary"
+        style={{ fontFamily: 'var(--font-family-serif)' }}>
+        {title}
+      </h3>
+    </div>
+  );
+}
+
 export function CarpoolSection({ carpool }: CarpoolSectionProps) {
   if (!carpool) return null;
 
-  // Link type - show button to external sheet
   if (carpool.type === 'link' && carpool.url) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            <span className="flex items-center gap-2">
-              <span>🚗</span>
-              Carpooling
-            </span>
-          </CardTitle>
-        </CardHeader>
-        <p className="text-text-secondary mb-4">
+      <div className="bg-bg-card rounded-xl card-shadow p-5 md:p-6">
+        <SectionHeader title="Carpooling" />
+        <p className="text-sm text-text-secondary mb-4">
           View and sign up for carpooling arrangements in our shared spreadsheet.
         </p>
         <a href={carpool.url} target="_blank" rel="noopener noreferrer">
-          <Button variant="outline" className="w-full md:w-auto">
-            Open Carpool Sheet
-            <span className="ml-2">↗</span>
+          <Button variant="outline" className="w-full">
+            Open Carpool Sheet ↗
           </Button>
         </a>
-      </Card>
+      </div>
     );
   }
 
-  // Embedded type - show carpool data directly
   if (carpool.type === 'embedded' && carpool.data && carpool.data.length > 0) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            <span className="flex items-center gap-2">
-              <span>🚗</span>
-              Carpooling
-            </span>
-          </CardTitle>
-        </CardHeader>
-        <div className="space-y-4">
+      <div className="bg-bg-card rounded-xl card-shadow p-5 md:p-6">
+        <SectionHeader title="Carpooling" />
+        <div className="space-y-3">
           {carpool.data.map((car, index) => (
-            <div
-              key={index}
-              className="p-4 bg-bg-secondary rounded-xl"
-            >
-              <div className="flex items-center justify-between mb-3">
+            <div key={index} className="p-3 bg-bg-secondary rounded-xl">
+              <div className="flex items-center justify-between mb-2">
                 <div>
-                  <span className="font-medium text-text-primary">{car.driver}</span>
+                  <span className="font-medium text-sm text-text-primary">{car.driver}</span>
                   {car.vehicle && (
-                    <span className="text-text-secondary ml-2">({car.vehicle})</span>
+                    <span className="text-xs text-text-secondary ml-2">({car.vehicle})</span>
                   )}
                 </div>
-                <span className="text-sm text-text-muted">
+                <span className="text-xs text-text-muted">
                   {car.passengers.length}/{car.seats} seats
                 </span>
               </div>
-              {/* Departure info */}
               {(car.departureTime || car.departureLocation) && (
-                <div className="text-sm text-text-secondary mb-3">
-                  {car.departureTime && <span>🕐 {car.departureTime}</span>}
+                <div className="flex flex-wrap gap-3 text-xs text-text-secondary mb-2">
+                  {car.departureTime && (
+                    <span className="flex items-center gap-1">
+                      <ClockIcon className="w-3 h-3" /> {car.departureTime}
+                    </span>
+                  )}
                   {car.departureLocation && (
-                    <span className="ml-4">📍 {car.departureLocation}</span>
+                    <span className="flex items-center gap-1">
+                      <MapPinIcon className="w-3 h-3" /> {car.departureLocation}
+                    </span>
                   )}
                 </div>
               )}
-              {/* Passengers */}
-              <div className="flex flex-wrap gap-2">
-                {car.passengers.map((passenger, pIndex) => (
-                  <span
-                    key={pIndex}
-                    className="px-3 py-1 bg-accent-sage/15 text-accent-forest rounded-full text-sm"
-                  >
-                    {passenger}
+              <div className="flex flex-wrap gap-1.5">
+                {car.passengers.map((p, pi) => (
+                  <span key={pi} className="px-2.5 py-0.5 bg-accent-sage/15 text-accent-forest rounded-full text-xs">
+                    {p}
                   </span>
                 ))}
                 {car.passengers.length < car.seats && (
-                  <span className="px-3 py-1 bg-bg-card border border-dashed border-border rounded-full text-sm text-text-muted">
-                    + {car.seats - car.passengers.length} available
+                  <span className="px-2.5 py-0.5 bg-bg-card border border-dashed border-border rounded-full text-xs text-text-muted">
+                    +{car.seats - car.passengers.length} available
                   </span>
                 )}
               </div>
             </div>
           ))}
         </div>
-      </Card>
+      </div>
     );
   }
 

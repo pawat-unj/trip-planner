@@ -29,7 +29,7 @@ export interface MapMarker {
   description?: string;
   lat: number;
   lon: number;
-  type: 'camp' | 'trailhead' | 'viewpoint' | 'water' | 'food' | 'accommodation' | 'activity' | 'poi';
+  type: 'camp' | 'trailhead' | 'viewpoint' | 'water' | 'food' | 'accommodation' | 'activity' | 'poi' | 'divider';
   day?: number;
 }
 
@@ -140,6 +140,7 @@ export interface BackpackingData {
   distanceUnit: 'miles' | 'km';
   days: number;
   terrain: Terrain[];
+  elevationGain?: number;
   trailStats?: TrailStats;
   permitRequired?: boolean;
   permitInfo?: string;
@@ -156,6 +157,7 @@ export interface DayHikeData {
   distance: number;
   distanceUnit: 'miles' | 'km';
   terrain: Terrain[];
+  elevationGain?: number;
   trailStats?: TrailStats;
   trailheadParking?: string;
 }

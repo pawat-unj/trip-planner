@@ -34,6 +34,7 @@
 
   /* Typography */
   --font-family-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-family-serif: 'Lora', Georgia, serif;
 
   /* Shadows */
   --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.06);
@@ -60,6 +61,11 @@ body {
 
 #root {
   min-height: 100vh;
+}
+
+/* Serif headings */
+.font-serif {
+  font-family: var(--font-family-serif);
 }
 
 /* Custom utilities */

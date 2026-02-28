@@ -6,11 +6,9 @@ import { Card, Button } from '../components/ui';
 import { TripMap, ElevationProfile } from '../components/maps';
 import {
   TripHeader,
-  HighlightsSection,
-  WeatherSection,
+  TripOverviewSection,
   PackingListSection,
   ItinerarySection,
-  ImportantInfoSection,
   CarpoolSection,
   PhotosSection,
   TransportationSection,
@@ -25,13 +23,28 @@ export function Viewer() {
   const [state, setState] = useState<ViewerState>('loading');
   const [error, setError] = useState<string>('');
   const [tripData, setTripData] = useState<TripData | null>(null);
-  const [, setSelectedDay] = useState<number | 'all'>('all');
 
   useEffect(() => {
     const loadTrip = async () => {
       if (!gistParam) {
         setState('error');
         setError('No trip specified. Please provide a gist ID in the URL.');
+        return;
+      }
+
+      // Demo mode: load local demo-trip.json
+      if (gistParam === 'demo') {
+        try {
+          setState('loading');
+          const res = await fetch('/trip-planner/demo-trip.json');
+          const data = await res.json();
+          if (!validateTripData(data)) throw new Error('Invalid demo data.');
+          setTripData(data);
+          setState('success');
+        } catch (err) {
+          setState('error');
+          setError(err instanceof Error ? err.message : 'Failed to load demo.');
+        }
         return;
       }
 
@@ -61,74 +74,50 @@ export function Viewer() {
     loadTrip();
   }, [gistParam]);
 
-  if (state === 'loading') {
-    return <LoadingState />;
-  }
-
-  if (state === 'error') {
-    return <ErrorState message={error} />;
-  }
-
-  if (!tripData) {
-    return <ErrorState message="Failed to load trip data." />;
-  }
+  if (state === 'loading') return <LoadingState />;
+  if (state === 'error')   return <ErrorState message={error} />;
+  if (!tripData)           return <ErrorState message="Failed to load trip data." />;
 
   const trailStats = (tripData.templateData as BackpackingData | DayHikeData)?.trailStats;
-  const hasElevation = trailStats?.elevationProfile && trailStats.elevationProfile.length > 0;
+  const hasElevation = !!trailStats?.elevationProfile?.length;
   const isRoadTrip = tripData.meta.template === 'roadtrip';
+  const hasMap = tripData.mapData &&
+    (tripData.mapData.routes.length > 0 || tripData.mapData.markers.length > 0);
 
   return (
     <div className="min-h-screen bg-bg-primary">
       <div className="max-w-5xl mx-auto px-4 py-6 md:py-8">
+
         {/* Back link */}
         <Link
           to="/"
-          className="inline-flex items-center gap-2 text-text-secondary hover:text-text-primary mb-6"
+          className="inline-flex items-center gap-1.5 text-sm text-text-muted hover:text-text-primary mb-6 transition-colors"
         >
           ← Back to Editor
         </Link>
 
-        {/* Trip Header */}
+        {/* Trip Header (dark hero + stats row) */}
         <TripHeader trip={tripData} />
 
-        {/* Main Content Grid */}
+        {/* ── Main 2-column grid ─────────────────────────────────────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Main Content */}
+
+          {/* Left — Overview + Itinerary */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Map */}
-            {tripData.mapData && (tripData.mapData.routes.length > 0 || tripData.mapData.markers.length > 0) && (
-              <Card>
-                <TripMap
-                  mapData={tripData.mapData}
-                  height="400px"
-                  showDayTabs={true}
-                  onDayChange={setSelectedDay}
-                />
-              </Card>
+
+            {/* Trip Overview: highlights + important info combined */}
+            {(tripData.shared.highlights.length > 0 || tripData.shared.importantInfo.length > 0) && (
+              <TripOverviewSection
+                highlights={tripData.shared.highlights}
+                importantInfo={tripData.shared.importantInfo}
+              />
             )}
 
-            {/* Elevation Profile (for hiking templates) */}
-            {hasElevation && (
-              <Card>
-                <div className="mb-4">
-                  <h3 className="text-lg font-semibold text-text-primary flex items-center gap-2">
-                    <span>📈</span>
-                    Elevation Profile
-                  </h3>
-                </div>
-                <ElevationProfile
-                  data={trailStats.elevationProfile}
-                  unit="imperial"
-                  height={200}
-                />
-              </Card>
-            )}
-
-            {/* Itinerary */}
+            {/* Itinerary with weather integrated per day */}
             {tripData.itinerary.length > 0 && (
               <ItinerarySection
                 itinerary={tripData.itinerary}
-                onDaySelect={(day) => setSelectedDay(day)}
+                weather={tripData.shared.weather}
               />
             )}
 
@@ -140,21 +129,33 @@ export function Viewer() {
             )}
           </div>
 
-          {/* Right Column - Sidebar */}
+          {/* Right — Map + Packing + Carpool + Photos */}
           <div className="space-y-6">
-            {/* Highlights */}
-            {tripData.shared.highlights.length > 0 && (
-              <HighlightsSection highlights={tripData.shared.highlights} />
+
+            {/* Interactive Map */}
+            {hasMap && (
+              <Card padding="none">
+                <TripMap
+                  mapData={tripData.mapData}
+                  height="280px"
+                  showDayTabs={true}
+                  onDayChange={() => {}}
+                />
+              </Card>
             )}
 
-            {/* Weather */}
-            {tripData.shared.weather && tripData.shared.weather.length > 0 && (
-              <WeatherSection weather={tripData.shared.weather} />
-            )}
-
-            {/* Important Info */}
-            {tripData.shared.importantInfo.length > 0 && (
-              <ImportantInfoSection info={tripData.shared.importantInfo} />
+            {/* Elevation Profile */}
+            {hasElevation && (
+              <Card>
+                <p className="text-xs font-semibold uppercase tracking-widest text-text-muted mb-3">
+                  Elevation Profile
+                </p>
+                <ElevationProfile
+                  data={trailStats!.elevationProfile}
+                  unit="imperial"
+                  height={150}
+                />
+              </Card>
             )}
 
             {/* Packing List */}
@@ -178,7 +179,7 @@ export function Viewer() {
         <div className="mt-12 pt-6 border-t border-border text-center text-sm text-text-muted">
           <p>
             Created with{' '}
-            <Link to="/" className="text-accent-sage hover:underline">
+            <Link to="/" className="text-accent-rust hover:underline">
               Trip Planner
             </Link>
           </p>
@@ -192,8 +193,8 @@ function LoadingState() {
   return (
     <div className="min-h-screen bg-bg-primary flex items-center justify-center">
       <div className="text-center">
-        <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-accent-sage border-t-transparent mb-4" />
-        <p className="text-text-secondary">Loading trip...</p>
+        <div className="inline-block animate-spin rounded-full h-10 w-10 border-2 border-accent-rust border-t-transparent mb-4" />
+        <p className="text-sm text-text-secondary">Loading trip…</p>
       </div>
     </div>
   );

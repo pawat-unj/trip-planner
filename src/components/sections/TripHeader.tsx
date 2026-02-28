@@ -1,206 +1,243 @@
 import type { TripData, BackpackingData, DayHikeData, RoadTripData } from '../../types';
-import { DifficultyBadge, TerrainBadge } from '../ui';
+import {
+  BackpackIcon, CarIcon, HikerIcon,
+  CalendarIcon, MapPinIcon, RouteIcon, TrendingUpIcon,
+  MountainIcon, TreeIcon, WavesIcon, DesertIcon, VolcanoIcon,
+  ActivityIcon,
+} from '../ui/Icon';
 import { formatDistance, formatElevation } from '../../utils/gpx';
 
 interface TripHeaderProps {
   trip: TripData;
 }
 
+// ── Terrain config ────────────────────────────────────────────────────────────
+
+type Terrain = 'mountain' | 'coast' | 'forest' | 'desert' | 'volcano' | 'mixed';
+
+const terrainConfig: Record<Terrain, { label: string; Icon: React.FC<{ className?: string }> }> = {
+  mountain: { label: 'Mountain', Icon: MountainIcon },
+  coast:    { label: 'Coast',    Icon: WavesIcon },
+  forest:   { label: 'Forest',   Icon: TreeIcon },
+  desert:   { label: 'Desert',   Icon: DesertIcon },
+  volcano:  { label: 'Volcano',  Icon: VolcanoIcon },
+  mixed:    { label: 'Mixed',    Icon: ActivityIcon },
+};
+
+// ── Template config ───────────────────────────────────────────────────────────
+
+const templateConfig = {
+  backpacking: { label: 'Backpacking Trip', Icon: BackpackIcon },
+  roadtrip:    { label: 'Road Trip',        Icon: CarIcon },
+  dayhike:     { label: 'Day Hike',         Icon: HikerIcon },
+};
+
+// ── Main component ────────────────────────────────────────────────────────────
+
 export function TripHeader({ trip }: TripHeaderProps) {
   const { meta, templateData } = trip;
+  const template = templateConfig[meta.template];
 
-  // Format date range
+  // Date range
   const formatDateRange = () => {
     const start = new Date(meta.dates.start);
     const end = new Date(meta.dates.end);
-    const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
-
+    const opts: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
     if (start.getFullYear() !== end.getFullYear()) {
-      return `${start.toLocaleDateString('en-US', { ...options, year: 'numeric' })} - ${end.toLocaleDateString('en-US', { ...options, year: 'numeric' })}`;
+      return `${start.toLocaleDateString('en-US', { ...opts, year: 'numeric' })} – ${end.toLocaleDateString('en-US', { ...opts, year: 'numeric' })}`;
     }
     if (start.getMonth() !== end.getMonth()) {
-      return `${start.toLocaleDateString('en-US', options)} - ${end.toLocaleDateString('en-US', { ...options, year: 'numeric' })}`;
+      return `${start.toLocaleDateString('en-US', opts)} – ${end.toLocaleDateString('en-US', { ...opts, year: 'numeric' })}`;
     }
-    return `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${end.getDate()}, ${end.getFullYear()}`;
+    return `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${end.getDate()}, ${end.getFullYear()}`;
   };
 
-  // Get template icon
-  const templateIcons = {
-    backpacking: '🎒',
-    roadtrip: '🚗',
-    dayhike: '🥾',
-  };
+  // Terrain tags (backpacking / dayhike only)
+  const terrain: Terrain[] = (meta.template !== 'roadtrip')
+    ? (templateData as BackpackingData | DayHikeData).terrain as Terrain[]
+    : [];
 
-  // Render stats based on template type
-  const renderStats = () => {
-    const stats = [];
-
-    if (meta.template === 'backpacking' || meta.template === 'dayhike') {
-      const data = templateData as BackpackingData | DayHikeData;
-
-      // Difficulty
-      stats.push(
-        <StatItem key="difficulty" label="Difficulty">
-          <DifficultyBadge difficulty={data.difficulty} />
-        </StatItem>
-      );
-
-      // Distance
-      stats.push(
-        <StatItem key="distance" label="Distance">
-          <span className="text-xl font-semibold text-text-primary">
-            {formatDistance(data.distance, data.distanceUnit === 'km' ? 'km' : 'miles')}
-          </span>
-        </StatItem>
-      );
-
-      // Elevation (if available)
-      if (data.trailStats) {
-        stats.push(
-          <StatItem key="elevation" label="Elevation Gain">
-            <span className="text-xl font-semibold text-text-primary">
-              {formatElevation(data.trailStats.elevationGain, 'feet')}
-            </span>
-          </StatItem>
-        );
-      }
-
-      // Days (backpacking only)
-      if (meta.template === 'backpacking') {
-        const bpData = data as BackpackingData;
-        stats.push(
-          <StatItem key="days" label="Duration">
-            <span className="text-xl font-semibold text-text-primary">
-              {bpData.days} {bpData.days === 1 ? 'day' : 'days'}
-            </span>
-          </StatItem>
-        );
-      }
-
-      // Terrain
-      if (data.terrain.length > 0) {
-        stats.push(
-          <StatItem key="terrain" label="Terrain">
-            <div className="flex flex-wrap gap-1">
-              {data.terrain.map((t) => (
-                <TerrainBadge key={t} terrain={t} size="sm" />
-              ))}
-            </div>
-          </StatItem>
-        );
-      }
-    }
-
-    if (meta.template === 'roadtrip') {
-      const data = templateData as RoadTripData;
-
-      // Days
-      stats.push(
-        <StatItem key="days" label="Duration">
-          <span className="text-xl font-semibold text-text-primary">
-            {data.days} {data.days === 1 ? 'day' : 'days'}
-          </span>
-        </StatItem>
-      );
-
-      // Total miles
-      if (data.totalMiles) {
-        stats.push(
-          <StatItem key="miles" label="Total Distance">
-            <span className="text-xl font-semibold text-text-primary">
-              {data.totalMiles.toLocaleString()} mi
-            </span>
-          </StatItem>
-        );
-      }
-
-      // Stops count
-      const stopsCount = trip.itinerary.reduce((acc, day) => acc + day.activities.length, 0);
-      stats.push(
-        <StatItem key="stops" label="Stops">
-          <span className="text-xl font-semibold text-text-primary">
-            {stopsCount}
-          </span>
-        </StatItem>
-      );
-    }
-
-    return stats;
-  };
+  // Stats
+  const stats = buildStats(meta.template, templateData, trip);
 
   return (
     <div className="mb-8">
-      {/* Cover image */}
-      {meta.coverImage && (
-        <div className="relative h-48 md:h-64 -mx-4 md:-mx-6 -mt-4 md:-mt-6 mb-6 overflow-hidden rounded-b-2xl">
-          <img
-            src={meta.coverImage}
-            alt={meta.title}
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-        </div>
-      )}
-
-      {/* Template badge */}
-      <div className="flex items-center gap-2 mb-3">
-        <span className="text-2xl">{templateIcons[meta.template]}</span>
-        <span className="text-sm font-medium text-text-secondary uppercase tracking-wide">
-          {meta.template.replace('trip', ' Trip')}
-        </span>
-      </div>
-
-      {/* Title */}
-      <h1 className="text-3xl md:text-4xl font-bold text-text-primary mb-2">
-        {meta.title}
-      </h1>
-
-      {/* Subtitle */}
-      {meta.subtitle && (
-        <p className="text-lg text-text-secondary mb-4">
-          {meta.subtitle}
-        </p>
-      )}
-
-      {/* Date and location */}
-      <div className="flex flex-wrap items-center gap-4 text-text-secondary mb-6">
-        <div className="flex items-center gap-2">
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-          <span>{formatDateRange()}</span>
-        </div>
-        {meta.location && (
-          <div className="flex items-center gap-2">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            <span>{meta.location}</span>
-          </div>
+      {/* ── Dark hero card ─────────────────────────────────────────────────── */}
+      <div className="relative rounded-2xl overflow-hidden mb-5" style={{ background: '#1A1208' }}>
+        {/* Cover image as subtle overlay */}
+        {meta.coverImage && (
+          <>
+            <img
+              src={meta.coverImage}
+              alt=""
+              aria-hidden
+              className="absolute inset-0 w-full h-full object-cover opacity-25"
+            />
+            <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(26,18,8,0.92) 40%, rgba(26,18,8,0.70) 100%)' }} />
+          </>
         )}
+
+        <div className="relative px-6 py-7 md:px-8 md:py-9">
+          {/* Badge row: template + terrain */}
+          <div className="flex flex-wrap items-center gap-2 mb-4">
+            {/* Template pill */}
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-sm font-medium"
+              style={{ borderColor: 'rgba(193,127,89,0.7)', color: '#d4a574' }}>
+              <template.Icon className="w-3.5 h-3.5" />
+              {template.label}
+            </span>
+
+            {/* Terrain pills */}
+            {terrain.map((t) => {
+              const tc = terrainConfig[t];
+              if (!tc) return null;
+              return (
+                <span key={t}
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-medium"
+                  style={{ borderColor: 'rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.65)' }}>
+                  <tc.Icon className="w-3.5 h-3.5" />
+                  {tc.label}
+                </span>
+              );
+            })}
+          </div>
+
+          {/* Title */}
+          <h1 className="font-serif text-3xl md:text-4xl font-semibold leading-tight mb-2"
+            style={{ color: '#F8F3EC', fontFamily: 'var(--font-family-serif)' }}>
+            {meta.title}
+          </h1>
+
+          {/* Date + Location row */}
+          <div className="flex flex-wrap items-center gap-5 text-sm" style={{ color: 'rgba(248,243,236,0.65)' }}>
+            <span className="flex items-center gap-1.5">
+              <CalendarIcon className="w-3.5 h-3.5" />
+              {formatDateRange()}
+            </span>
+            {meta.location && (
+              <span className="flex items-center gap-1.5">
+                <MapPinIcon className="w-3.5 h-3.5" />
+                {meta.location}
+              </span>
+            )}
+          </div>
+        </div>
       </div>
 
-      {/* Stats grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {renderStats()}
+      {/* ── Stats row ──────────────────────────────────────────────────────── */}
+      {stats.length > 0 && (
+        <div className={`grid gap-3 ${stats.length <= 4 ? `grid-cols-2 md:grid-cols-${stats.length}` : 'grid-cols-2 md:grid-cols-4'}`}>
+          {stats.map((s) => (
+            <StatCard key={s.label} icon={s.icon} label={s.label} value={s.value} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── StatCard ──────────────────────────────────────────────────────────────────
+
+interface StatCardProps {
+  icon: React.ReactNode;
+  label: string;
+  value: React.ReactNode;
+}
+
+function StatCard({ icon, label, value }: StatCardProps) {
+  return (
+    <div className="bg-bg-card rounded-xl border border-border p-4 flex items-start gap-3 card-shadow">
+      <div className="mt-0.5 text-accent-rust opacity-80">{icon}</div>
+      <div>
+        <div className="text-xs text-text-muted uppercase tracking-widest mb-0.5">{label}</div>
+        <div className="font-semibold text-text-primary text-base leading-snug">{value}</div>
       </div>
     </div>
   );
 }
 
-interface StatItemProps {
-  label: string;
-  children: React.ReactNode;
+// ── Build stats list ──────────────────────────────────────────────────────────
+
+function buildStats(
+  template: TripData['meta']['template'],
+  templateData: TripData['templateData'],
+  trip: TripData,
+) {
+  const stats: { label: string; value: React.ReactNode; icon: React.ReactNode }[] = [];
+
+  if (template === 'backpacking' || template === 'dayhike') {
+    const data = templateData as BackpackingData | DayHikeData;
+
+    stats.push({
+      label: 'Difficulty',
+      value: <DifficultyLabel difficulty={data.difficulty} />,
+      icon: <ActivityIcon className="w-4 h-4" />,
+    });
+
+    stats.push({
+      label: 'Distance',
+      value: formatDistance(data.distance, data.distanceUnit === 'km' ? 'km' : 'miles'),
+      icon: <RouteIcon className="w-4 h-4" />,
+    });
+
+    if (data.trailStats || data.elevationGain) {
+      stats.push({
+        label: 'Elevation',
+        value: `+${formatElevation(data.trailStats?.elevationGain || data.elevationGain || 0, 'feet')}`,
+        icon: <TrendingUpIcon className="w-4 h-4" />,
+      });
+    }
+
+    if (template === 'backpacking') {
+      stats.push({
+        label: 'Duration',
+        value: `${(data as BackpackingData).days} days`,
+        icon: <CalendarIcon className="w-4 h-4" />,
+      });
+    }
+  }
+
+  if (template === 'roadtrip') {
+    const data = templateData as RoadTripData;
+
+    stats.push({
+      label: 'Duration',
+      value: `${data.days} days`,
+      icon: <CalendarIcon className="w-4 h-4" />,
+    });
+
+    if (data.totalMiles) {
+      stats.push({
+        label: 'Total Distance',
+        value: `${data.totalMiles.toLocaleString()} mi`,
+        icon: <RouteIcon className="w-4 h-4" />,
+      });
+    }
+
+    const stops = trip.itinerary.reduce((a, d) => a + d.activities.length, 0);
+    stats.push({
+      label: 'Stops',
+      value: stops.toString(),
+      icon: <MapPinIcon className="w-4 h-4" />,
+    });
+  }
+
+  return stats;
 }
 
-function StatItem({ label, children }: StatItemProps) {
+// ── Difficulty label (text only, no badge) ────────────────────────────────────
+
+const difficultyColors: Record<string, string> = {
+  easy:     '#7eb8a8',
+  moderate: '#d4a574',
+  hard:     '#c17f59',
+  expert:   '#9f5842',
+};
+
+function DifficultyLabel({ difficulty }: { difficulty: string }) {
   return (
-    <div className="bg-bg-secondary rounded-xl p-4">
-      <div className="text-xs text-text-muted uppercase tracking-wide mb-1">
-        {label}
-      </div>
-      {children}
-    </div>
+    <span style={{ color: difficultyColors[difficulty] ?? '#636e72' }}>
+      {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
+    </span>
   );
 }

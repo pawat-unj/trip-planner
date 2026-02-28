@@ -1,7 +1,23 @@
-import { Link } from 'react-router-dom';
-import { Button, Card } from '../components/ui';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Button, Card, Input } from '../components/ui';
+import { extractGistIdFromUrl } from '../utils/gist';
 
 export function Home() {
+  const navigate = useNavigate();
+  const [gistInput, setGistInput] = useState('');
+  const [gistError, setGistError] = useState('');
+
+  const handleViewTrip = () => {
+    const gistId = extractGistIdFromUrl(gistInput.trim());
+    if (!gistId) {
+      setGistError('Please enter a valid Gist URL or Gist ID.');
+      return;
+    }
+    setGistError('');
+    navigate(`/view?gist=${gistId}`);
+  };
+
   return (
     <div className="min-h-screen bg-bg-primary">
       <div className="max-w-4xl mx-auto px-4 py-12 md:py-20">
@@ -19,6 +35,25 @@ export function Home() {
             </Link>
           </div>
         </div>
+
+        <Card className="mb-12">
+          <div className="space-y-3">
+            <h2 className="text-xl font-semibold text-text-primary">View a Trip</h2>
+            <p className="text-sm text-text-secondary">
+              Paste a Gist link or Gist ID and open the trip viewer directly.
+            </p>
+            <div className="flex flex-col md:flex-row gap-3">
+              <Input
+                placeholder="https://gist.github.com/username/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                value={gistInput}
+                onChange={(e) => setGistInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleViewTrip()}
+              />
+              <Button onClick={handleViewTrip}>View Trip</Button>
+            </div>
+            {gistError && <p className="text-sm text-accent-rust">{gistError}</p>}
+          </div>
+        </Card>
 
         {/* Features */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">

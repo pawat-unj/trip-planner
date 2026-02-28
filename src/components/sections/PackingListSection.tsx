@@ -1,78 +1,72 @@
 import { useState, useMemo } from 'react';
 import type { PackingItem } from '../../types';
-import { Card, CardHeader, CardTitle, Badge } from '../ui';
+import { PackageIcon, CheckIcon } from '../ui/Icon';
 
 interface PackingListSectionProps {
   items: PackingItem[];
 }
 
 export function PackingListSection({ items }: PackingListSectionProps) {
-  const [checkedItems, setCheckedItems] = useState<Set<string>>(() => {
-    // Initialize from items that are already checked
-    return new Set(items.filter((item) => item.checked).map((item) => item.id));
-  });
+  const [checkedItems, setCheckedItems] = useState<Set<string>>(() =>
+    new Set(items.filter((i) => i.checked).map((i) => i.id))
+  );
 
-  // Group items by category
   const groupedItems = useMemo(() => {
     const groups: Record<string, PackingItem[]> = {};
     items.forEach((item) => {
-      if (!groups[item.category]) {
-        groups[item.category] = [];
-      }
-      groups[item.category].push(item);
+      (groups[item.category] ??= []).push(item);
     });
     return groups;
   }, [items]);
 
   const categories = Object.keys(groupedItems).sort();
+  const total = items.length;
+  const checked = checkedItems.size;
+  const progress = total > 0 ? (checked / total) * 100 : 0;
 
-  const toggleItem = (id: string) => {
+  const toggleItem = (id: string) =>
     setCheckedItems((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
+      next.has(id) ? next.delete(id) : next.add(id);
       return next;
     });
-  };
-
-  // Calculate progress
-  const totalItems = items.length;
-  const checkedCount = checkedItems.size;
-  const progress = totalItems > 0 ? (checkedCount / totalItems) * 100 : 0;
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle>
-            <span className="flex items-center gap-2">
-              <span>🎒</span>
-              Packing List
-            </span>
-          </CardTitle>
-          <Badge variant={progress === 100 ? 'sage' : 'default'}>
-            {checkedCount}/{totalItems} packed
-          </Badge>
+    <div className="bg-bg-card rounded-xl card-shadow p-5 md:p-6">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <PackageIcon className="w-4 h-4 text-accent-rust" />
+          <h3 className="font-serif font-semibold text-text-primary"
+            style={{ fontFamily: 'var(--font-family-serif)' }}>
+            Packing List
+          </h3>
         </div>
-        {/* Progress bar */}
-        <div className="mt-3 h-2 bg-bg-secondary rounded-full overflow-hidden">
-          <div
-            className="h-full bg-accent-sage transition-all duration-300"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-      </CardHeader>
+        <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+          progress === 100
+            ? 'bg-accent-sage/15 text-accent-forest'
+            : 'bg-bg-secondary text-text-secondary'
+        }`}>
+          {checked}/{total} packed
+        </span>
+      </div>
 
-      <div className="space-y-6">
+      {/* Progress bar */}
+      <div className="h-1.5 bg-bg-secondary rounded-full overflow-hidden mb-5">
+        <div
+          className="h-full rounded-full transition-all duration-300"
+          style={{ width: `${progress}%`, background: '#c17f59' }}
+        />
+      </div>
+
+      {/* Categories */}
+      <div className="space-y-5">
         {categories.map((category) => (
           <div key={category}>
-            <h4 className="text-sm font-medium text-text-secondary uppercase tracking-wide mb-3">
+            <p className="text-xs font-semibold uppercase tracking-widest text-text-muted mb-2">
               {category}
-            </h4>
-            <div className="space-y-2">
+            </p>
+            <div className="space-y-1.5">
               {groupedItems[category].map((item) => (
                 <PackingItemRow
                   key={item.id}
@@ -85,49 +79,37 @@ export function PackingListSection({ items }: PackingListSectionProps) {
           </div>
         ))}
       </div>
-    </Card>
+    </div>
   );
 }
 
-interface PackingItemRowProps {
-  item: PackingItem;
-  checked: boolean;
-  onToggle: () => void;
-}
-
-function PackingItemRow({ item, checked, onToggle }: PackingItemRowProps) {
+function PackingItemRow({ item, checked, onToggle }: {
+  item: PackingItem; checked: boolean; onToggle: () => void;
+}) {
   return (
-    <label
-      className={`
-        flex items-center gap-3 p-3 rounded-lg cursor-pointer
-        transition-colors duration-200
-        ${checked ? 'bg-accent-sage/10' : 'bg-bg-secondary hover:bg-bg-secondary/70'}
-      `}
+    <div
+      onClick={onToggle}
+      className={`flex items-center gap-2.5 px-3 py-2 rounded-lg cursor-pointer transition-colors select-none
+        ${checked ? 'bg-accent-sage/8' : 'hover:bg-bg-secondary/60'}`}
     >
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={onToggle}
-        className="
-          w-5 h-5 rounded border-2 border-border
-          text-accent-sage focus:ring-accent-sage focus:ring-offset-0
-          cursor-pointer
-        "
-      />
-      <span
-        className={`
-          flex-1 transition-all duration-200
-          ${checked ? 'text-text-muted line-through' : 'text-text-primary'}
-        `}
-      >
+      {/* Custom checkbox */}
+      <span className={`flex-shrink-0 w-4 h-4 rounded border transition-colors flex items-center justify-center
+        ${checked ? 'bg-accent-rust border-accent-rust' : 'border-border bg-bg-card'}`}>
+        {checked && <CheckIcon className="w-3 h-3 text-white" />}
+      </span>
+
+      <span className={`flex-1 text-sm transition-all ${checked ? 'text-text-muted line-through' : 'text-text-primary'}`}>
         {item.name}
         {item.quantity && item.quantity > 1 && (
-          <span className="text-text-secondary ml-1">×{item.quantity}</span>
+          <span className="text-text-muted ml-1">×{item.quantity}</span>
         )}
       </span>
+
       {item.essential && !checked && (
-        <Badge variant="terracotta" size="sm">Essential</Badge>
+        <span className="text-xs px-1.5 py-0.5 rounded bg-accent-terracotta/15 text-accent-rust font-medium flex-shrink-0">
+          Essential
+        </span>
       )}
-    </label>
+    </div>
   );
 }

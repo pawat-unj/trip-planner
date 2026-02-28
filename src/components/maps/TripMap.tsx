@@ -26,6 +26,7 @@ const markerColors: Record<MapMarker['type'], string> = {
   accommodation: '#c17f59', // rust
   activity: '#5a8a7a',  // forest
   poi: '#636e72',       // gray
+  divider: '#1f2937',   // dark divider
 };
 
 const markerIcons: Record<MapMarker['type'], string> = {
@@ -37,6 +38,7 @@ const markerIcons: Record<MapMarker['type'], string> = {
   accommodation: '🏨',
   activity: '🎯',
   poi: '📍',
+  divider: '🗓️',
 };
 
 function createCustomIcon(type: MapMarker['type']): L.DivIcon {
@@ -79,6 +81,8 @@ interface TripMapProps {
   height?: string;
   showDayTabs?: boolean;
   onDayChange?: (day: number | 'all') => void;
+  onMapClick?: (lat: number, lon: number) => void;
+  mapClickEnabled?: boolean;
   className?: string;
 }
 
@@ -87,6 +91,8 @@ export function TripMap({
   height = '400px',
   showDayTabs = true,
   onDayChange,
+  onMapClick,
+  mapClickEnabled = false,
   className = '',
 }: TripMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
@@ -124,6 +130,28 @@ export function TripMap({
       mapInstanceRef.current = null;
     };
   }, []);
+
+  // Optional map click handler for editor drawing mode
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    if (!map) return;
+
+    const handleClick = (e: L.LeafletMouseEvent) => {
+      onMapClick?.(e.latlng.lat, e.latlng.lng);
+    };
+
+    if (mapClickEnabled && onMapClick) {
+      map.on('click', handleClick);
+      map.getContainer().style.cursor = 'crosshair';
+    } else {
+      map.getContainer().style.cursor = '';
+    }
+
+    return () => {
+      map.off('click', handleClick);
+      map.getContainer().style.cursor = '';
+    };
+  }, [onMapClick, mapClickEnabled]);
 
   // Update routes and markers when data or selection changes
   useEffect(() => {

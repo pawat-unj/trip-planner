@@ -8,9 +8,9 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantClasses = {
-  primary: 'bg-accent-sage text-white hover:bg-accent-forest',
-  secondary: 'bg-accent-terracotta text-white hover:bg-accent-rust',
-  outline: 'border-2 border-accent-sage text-accent-sage hover:bg-accent-sage hover:text-white',
+  primary: 'bg-[#161312] text-white hover:bg-[#080707]',
+  secondary: 'bg-[#e67a00] text-white hover:bg-[#cf6f05]',
+  outline: 'border-2 border-[#cfc9c2] text-[#3f3b37] hover:bg-[#ece8e2]',
   ghost: 'text-text-secondary hover:text-text-primary hover:bg-bg-secondary',
 };
 
@@ -33,7 +33,7 @@ export function Button({
     <button
       className={`
         rounded-lg font-medium transition-colors duration-200
-        focus:outline-none focus:ring-2 focus:ring-accent-sage focus:ring-offset-2
+        focus:outline-none focus:ring-2 focus:ring-[#e67a00] focus:ring-offset-2
         disabled:opacity-50 disabled:cursor-not-allowed
         ${variantClasses[variant]}
         ${sizeClasses[size]}
