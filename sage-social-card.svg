@@ -1,34 +1,37 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
   <rect width="1200" height="630" fill="#ebe8e4"/>
 
-  <g transform="translate(500 210)">
-    <circle cx="100" cy="100" r="96" fill="#4E342E" stroke="#3E2723" stroke-width="4"/>
-    <circle cx="100" cy="100" r="88" fill="none" stroke="#8D6E63" stroke-width="4" stroke-dasharray="2 4"/>
-    <circle cx="100" cy="100" r="82" fill="#F5F1E8"/>
+  <g transform="translate(600 315)">
+    <g transform="translate(-240 -100)">
+      <circle cx="100" cy="100" r="96" fill="#4E342E" stroke="#3E2723" stroke-width="4"/>
+      <circle cx="100" cy="100" r="88" fill="none" stroke="#8D6E63" stroke-width="4" stroke-dasharray="2 4"/>
+      <circle cx="100" cy="100" r="82" fill="#F5F1E8"/>
 
-    <g stroke="#5D4037" stroke-width="3" stroke-linecap="round">
-      <line x1="100" y1="24" x2="100" y2="36"/>
-      <line x1="100" y1="164" x2="100" y2="176"/>
-      <line x1="24" y1="100" x2="36" y2="100"/>
-      <line x1="164" y1="100" x2="176" y2="100"/>
+      <g stroke="#5D4037" stroke-width="3" stroke-linecap="round">
+        <line x1="100" y1="24" x2="100" y2="36"/>
+        <line x1="100" y1="164" x2="100" y2="176"/>
+        <line x1="24" y1="100" x2="36" y2="100"/>
+        <line x1="164" y1="100" x2="176" y2="100"/>
+      </g>
+
+      <g transform="rotate(30 100 100)">
+        <path d="M100 30 L112 100 L100 100 Z" fill="#BF360C"/>
+        <path d="M100 30 L88 100 L100 100 Z" fill="#D84315"/>
+        <path d="M100 170 L112 100 L100 100 Z" fill="#455A64"/>
+        <path d="M100 170 L88 100 L100 100 Z" fill="#607D8B"/>
+        <circle cx="100" cy="100" r="4" fill="#3E2723"/>
+      </g>
     </g>
 
-    <g transform="rotate(30 100 100)">
-      <path d="M100 30 L112 100 L100 100 Z" fill="#BF360C"/>
-      <path d="M100 30 L88 100 L100 100 Z" fill="#D84315"/>
-      <path d="M100 170 L112 100 L100 100 Z" fill="#455A64"/>
-      <path d="M100 170 L88 100 L100 100 Z" fill="#607D8B"/>
-      <circle cx="100" cy="100" r="4" fill="#3E2723"/>
-    </g>
+    <text
+      x="112"
+      y="0"
+      text-anchor="middle"
+      dominant-baseline="middle"
+      fill="#1f1f1f"
+      font-size="112"
+      font-family="'Lora', 'Times New Roman', serif"
+      font-weight="700"
+    >Sage</text>
   </g>
-
-  <text
-    x="600"
-    y="490"
-    text-anchor="middle"
-    fill="#1f1f1f"
-    font-size="96"
-    font-family="'Lora', 'Times New Roman', serif"
-    font-weight="700"
-  >Sage</text>
 </svg>
